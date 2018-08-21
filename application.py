@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -24,20 +24,39 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+	if not session['logged_in']:
+		return login()
+	else:
+		return render_template('index.html')
 
 @app.route("/login", methods=["POST"])
 def login():
-	user = request.form.get("user")
+	if request.method == "POST":
+		user = request.form.get("user")
+		password = request.form.get("password")
+		if password== "123" and user=="admin":
+			session['logged_in'] = True
+			return "contrats"
+		else:
+			flash('wrong password')
+			return index()
+	return render_template('login.html')
 
-	try:
-		username = request.form.get("user")
-	except ValueError:
-		return render_template("error.html")
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
-	db.execute("INSERT INTO users (nume) VALUES (:nume)",
-		{"nume":user})
-	db.commit()
-	return render_template("succes.html")
+@app.route('/logout')
+def logout():
+	session['logged_in'] = False
+	return render_template('logout.html')
+
+@app.route('/books', methods=["GET","POST"])
+def books():
+	if request.method == "GET":
+
+		sel = db.execute("SELECT * from books where title='Krondor: The Betrayal'").fetchone()
+	
+	return sel
 
 

@@ -5,11 +5,16 @@ Login
 {% endblock %}
 
 {% block body %}
-<h1>Login</h1>
+<h1>Sign up</h1>
+{% if session['logged-in'] %}
+<h4>YOu are already logged in</h4>
+{% else %}
 <form action="{{url_for('login')}}"" method="post">
 	<div>
 		<input name="user" placeholder="username">
+		<input name="password" placeholder="username">
 	</div>
 	<button>enter username</button>
 </form>
+{% endif %}
 {% endblock %}
