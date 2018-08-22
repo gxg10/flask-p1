@@ -36,7 +36,7 @@ def login():
 		password = request.form.get("password")
 		if password== "123" and user=="admin":
 			session['logged_in'] = True
-			return "contrats"
+			return render_template('succes.html')
 		else:
 			flash('wrong password')
 			return index()
@@ -53,10 +53,36 @@ def logout():
 
 @app.route('/books', methods=["GET","POST"])
 def books():
-	if request.method == "GET":
+	#if request.method == "GET":
 
-		sel = db.execute("SELECT * from books where title='Krondor: The Betrayal'").fetchone()
-	
-	return sel
+	#	sel = db.execute("SELECT * from books where title='Krondor: The Betrayal'").fetchone()
+	#	sel = str(sel).rstrip()
+	#return sel
 
+	if request.method == "POST":
+		title_item = request.form.get("title")+'%'
+		isbn_item = request.form.get("isbn")+'%'
+		author_item = request.form.get("author")+'%'
+		error_msg = "eroareeeee"
+		title_req = db.execute("SELECT title, author from books where title like :search_r",
+			{"search_r":title_item}).fetchone()
+		isbn_req = db.execute("SELECT title, author from books where isbn like :isbn_r",
+			{"isbn_r":isbn_item}).fetchone()
+		author_req = db.execute("SELECT title, author from books where author like :author_r",
+			{"author_r":author_item}).fetchone()
+		
+		#if isbn_req:
+		#	return render_template("search_result.html", search_res=isbn_req)
+		#else:
+		#	return render_template("search_result.html", search_res=error_msg)
+		if title_req :
+			
+			return render_template("search_result.html", search_res=title_req)
+		else:
+			return render_template("search_result.html", search_res=error_msg)
+		
+		#if author_req:
+		#	return render_template("search_result.html", search_res=author_req)
+		#else:
+		#	return render_template("search_result.html", search_res=error_msg)
 

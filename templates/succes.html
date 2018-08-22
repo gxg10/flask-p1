@@ -5,5 +5,13 @@ Login
 {% endblock %}
 
 {% block body %}
-<h2>SUCCES</h2>
+<h2>SUCCES. go search</h2>
+<div>
+	<form action="{{url_for('books')}}" method="post" >
+		<input name="isbn" placeholder="isbn">
+		<input name="title" placeholder="title">
+		<input name="author" placeholder="author">
+		<button>cauta</button>
+	</form>
+</div>
 {% endblock %}
