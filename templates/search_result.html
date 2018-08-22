@@ -6,5 +6,8 @@ Search result
 
 {% block body %}
 <h2>search results :</h2>
-{{ search_res }}
+	
+
+<a href="{{url_for('search')}}">{{ search_res }}</a>
+
 {% endblock %}

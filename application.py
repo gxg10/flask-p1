@@ -51,8 +51,8 @@ def logout():
 	session['logged_in'] = False
 	return render_template('logout.html')
 
-@app.route('/books', methods=["GET","POST"])
-def books():
+@app.route('/search', methods=["GET","POST"])
+def search():
 	#if request.method == "GET":
 
 	#	sel = db.execute("SELECT * from books where title='Krondor: The Betrayal'").fetchone()
@@ -70,19 +70,25 @@ def books():
 			{"isbn_r":isbn_item}).fetchone()
 		author_req = db.execute("SELECT title, author from books where author like :author_r",
 			{"author_r":author_item}).fetchone()
+		#isbns = db.execute("SELECT isbn from books where isbn=:isb",
+		#	{"isb":}).fetchall()
 		
-		#if isbn_req:
-		#	return render_template("search_result.html", search_res=isbn_req)
-		#else:
-		#	return render_template("search_result.html", search_res=error_msg)
-		if title_req :
-			
-			return render_template("search_result.html", search_res=title_req)
+		if isbn_req is None:
+			return render_template("search_result.html", search_res=error_msg)	
 		else:
+			return render_template("search_result.html", search_res=isbn_req)
+		if title_req is None:
 			return render_template("search_result.html", search_res=error_msg)
-		
-		#if author_req:
-		#	return render_template("search_result.html", search_res=author_req)
-		#else:
-		#	return render_template("search_result.html", search_res=error_msg)
+		else:
+			return render_template("search_result.html", search_res=title_req) 
+		if author_req is None:
+			return render_template("search_result.html", search_res=error_msg)
+		else:
+			return render_template("search_result.html", search_res=author_req)
 
+@app.route("/search/<int:book_id>")
+def book(book_id):
+
+	book_isbn = db.execute("SELECT isbn from books where isbn=:isbn_c",
+		{"isbn_c":book_id}).fetchone()
+	return render_template("search_result.html", search_res=book_isbn)
